@@ -10,11 +10,7 @@ import com.lynda.common.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 @Configuration
 @Import(DataConfig.class)
@@ -25,22 +21,35 @@ public class AppConfig {
     private String greetingText;
 
     public class Worker{
+        private String preamble;
         private String text;
 
-        public Worker(String text){
+        public Worker(String text, String preamble){
             this.text = text;
+            this.preamble = preamble;
         }
 
         public void execute(){
-            System.out.println("Hello " + text);
+            System.out.println( preamble + "  " + text);
         }
-
     }
 
     @Bean
-    public Worker worker(){
-        return new Worker(greetingText);
+    @Profile("dev")
+    public Worker workerForDev(){
+        return new Worker("Hello  " , greetingText);
     }
+
+    @Bean
+    @Profile("prod")
+    public Worker workerForProd(){
+        return new Worker("Greetings..  " , greetingText);
+    }
+
+//    @Bean
+//    public Worker worker(){
+//        return new Worker(greetingText);
+//    }
 
     @Autowired
     private CustomerRepository customerRepository;

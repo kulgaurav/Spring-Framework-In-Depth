@@ -10,20 +10,21 @@ import com.lynda.common.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 
 @Configuration
 @Import(DataConfig.class)
-@PropertySource("classpath:/application.properties")
+@PropertySource("classpath:/application-${spring.profiles.active}.properties")
 public class AppConfig {
 
     @Value("${greeting.text}")
     private String greetingText;
+
+    @Value("${greeting.preamble}")
+    private String getGreetingPreamble;
+
+    @Value("#{new Boolean(environment['spring.profiles.active'] == 'dev')}")
+    private boolean isDev;
 
     public class Worker{
         private String preamble;
@@ -32,24 +33,20 @@ public class AppConfig {
         public Worker(String preamble, String text){
             this.preamble = preamble;
             this.text = text;
+            System.out.println("New instance");
         }
 
         public void execute(){
-            System.out.println(preamble + " " + text);
+            System.out.println(preamble + " " + text + " is dev: " + isDev);
+
         }
 
     }
 
     @Bean
-    @Profile("dev")
-    public Worker workerForDev(){
-        return new Worker("Hello", greetingText);
-    }
-
-    @Bean
-    @Profile("prod")
-    public Worker workerForProd(){
-        return new Worker("Greetings", greetingText);
+    @Scope("prototype")
+    public Worker worker(){
+        return new Worker(getGreetingPreamble, greetingText);
     }
 
     @Autowired
@@ -78,6 +75,9 @@ public class AppConfig {
         System.out.println(orderService==null?"NULL":"A OK");
         Worker worker = context.getBean(Worker.class);
         worker.execute();
+
+        Worker worker1 = context.getBean(Worker.class);
+        worker1.execute();
     }
 }
 

@@ -7,13 +7,25 @@ import com.lynda.common.service.InventoryService;
 import com.lynda.common.service.OrderService;
 import com.lynda.common.service.impl.InventoryServiceImpl;
 import com.lynda.common.service.impl.OrderServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
+@Import(DataConfig.class)
 public class AppConfig {
+
+    @Autowired
+    private InventoryItemRepository inventoryItemRepository;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private SalesOrderRepository salesOrderRepository;
 
     @Bean
     public OrderService orderService(InventoryService inventoryService, CustomerRepository customerRepository, SalesOrderRepository salesOrderRepository){
@@ -23,21 +35,6 @@ public class AppConfig {
     @Bean
     public InventoryService inventoryService(InventoryItemRepository inventoryItemRepository){
         return new InventoryServiceImpl(inventoryItemRepository);
-    }
-
-    @Bean
-    public InventoryItemRepository inventoryItemRepository(){
-        return new InventoryItemRepository();
-    }
-
-    @Bean
-    public CustomerRepository customerRepository(){
-        return new CustomerRepository();
-    }
-
-    @Bean
-    public SalesOrderRepository salesOrderRepository(){
-        return new SalesOrderRepository();
     }
 
     public static void main (String[] args){
