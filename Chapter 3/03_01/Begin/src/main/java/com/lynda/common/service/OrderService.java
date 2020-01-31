@@ -2,8 +2,10 @@ package com.lynda.common.service;
 
 import com.lynda.common.domain.Customer;
 import com.lynda.common.domain.Order;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
+
 
 public interface OrderService {
     Order createOrder(Customer customer, Map<String, Long> items);

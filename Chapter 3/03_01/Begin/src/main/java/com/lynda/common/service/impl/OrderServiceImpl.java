@@ -6,14 +6,18 @@ import com.lynda.common.domain.Customer;
 import com.lynda.common.domain.Order;
 import com.lynda.common.service.InventoryService;
 import com.lynda.common.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+@Service
 public class OrderServiceImpl implements OrderService {
     private final InventoryService inventoryService;
     private final CustomerRepository customerRepository;
     private final SalesOrderRepository salesOrderRepository;
 
+    @Autowired
     public OrderServiceImpl(InventoryService inventoryService, CustomerRepository customerRepository, SalesOrderRepository salesOrderRepository) {
         this.inventoryService = inventoryService;
         this.customerRepository = customerRepository;

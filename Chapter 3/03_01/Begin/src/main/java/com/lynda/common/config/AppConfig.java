@@ -10,16 +10,11 @@ import com.lynda.common.service.impl.OrderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 
 @Configuration
 @PropertySource("classpath:/application.properties")
+@ComponentScan(basePackages = {"com.lynda.common"})
 public class AppConfig {
 
     @Value("${greeting.text}")
@@ -45,9 +40,18 @@ public class AppConfig {
 
     }
 
+    @Bean
+    public Worker worker(){
+        return new Worker(greetingPreamble, greetingText);
+    }
+
 
     public static void main (String[] args){
         ApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
+        Worker worker = context.getBean(Worker.class);
+        worker.execute();
+
+        OrderService orderService = context.getBean(OrderService.class);
 
     }
 }
